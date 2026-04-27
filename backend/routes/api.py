@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from models import EventLog, Event, ProcessModel
-from app import db
+from extensions import db
 from sqlalchemy import func
 
 api_bp = Blueprint('api', __name__)

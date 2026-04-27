@@ -1,42 +1,55 @@
 @echo off
+chcp 65001 >nul
 echo ========================================
-echo  财务单据流程挖掘系统 - 后端服务启动
+echo  财务单据流程挖掘系统 - 后端服务
 echo ========================================
 echo.
 
-cd /d "%~dp0backend"
+set SCRIPT_DIR=%~dp0
+set BACKEND_DIR=%SCRIPT_DIR%backend
+
+cd /d "%BACKEND_DIR%"
 
 echo 检查Python环境...
 python --version >nul 2>&1
 if errorlevel 1 (
-    echo [错误] 未找到Python，请先安装Python 3.9+
+    echo [错误] 未找到Python！
+    echo 请先安装Python 3.9或更高版本
+    echo 下载地址: https://www.python.org/downloads/
+    echo.
     pause
     exit /b 1
 )
 
 echo 检查虚拟环境...
 if not exist "venv" (
-    echo 创建虚拟环境...
-    python -m venv venv
+    echo.
+    echo [警告] 未找到虚拟环境！
+    echo 请先运行 install.bat 安装依赖
+    echo 或手动创建虚拟环境: python -m venv venv
+    echo.
+    pause
+    exit /b 1
 )
 
 echo 激活虚拟环境...
 call venv\Scripts\activate.bat
 
-echo 检查依赖...
-pip show flask >nul 2>&1
-if errorlevel 1 (
-    echo 安装依赖...
-    pip install -r requirements.txt
-)
-
 echo.
 echo ========================================
 echo  启动后端服务...
 echo  服务地址: http://localhost:5000
+echo  API文档: http://localhost:5000/api/health
 echo ========================================
+echo.
+echo 按 Ctrl+C 停止服务
 echo.
 
 python app.py
 
-pause
+if errorlevel 1 (
+    echo.
+    echo [错误] 服务启动失败！
+    echo 请检查是否已安装所有依赖（运行 install.bat）
+    pause
+)
