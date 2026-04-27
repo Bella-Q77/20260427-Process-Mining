@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 from typing import List, Dict, Any
 from models import EventLog, Event
-from app import db
+from extensions import db
 
 class SimulationService:
     """模拟数据生成服务"""

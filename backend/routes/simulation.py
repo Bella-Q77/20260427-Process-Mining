@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from services.simulation_service import SimulationService
 from models import EventLog
-from app import db
+from extensions import db
 
 simulation_bp = Blueprint('simulation', __name__)
 simulation_service = SimulationService()

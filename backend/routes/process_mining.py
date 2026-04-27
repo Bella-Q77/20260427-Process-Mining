@@ -1,13 +1,20 @@
 from flask import Blueprint, jsonify, request, send_file
-from services.process_mining_service import ProcessMiningService
 from models import EventLog, ProcessModel
-from app import db
+from extensions import db
 import os
 from config import Config
 
 mining_bp = Blueprint('mining', __name__)
-mining_service = ProcessMiningService()
 upload_folder = Config.UPLOAD_FOLDER
+
+_mining_service = None
+
+def get_mining_service():
+    global _mining_service
+    if _mining_service is None:
+        from services.process_mining_service import ProcessMiningService
+        _mining_service = ProcessMiningService()
+    return _mining_service
 
 @mining_bp.route('/discover', methods=['POST'])
 def discover_process():
@@ -49,7 +56,7 @@ def discover_process():
         }), 400
     
     try:
-        result = mining_service.discover_process(
+        result = get_mining_service().discover_process(
             event_log_id=event_log_id,
             algorithm=algorithm,
             model_name=model_name
@@ -90,7 +97,7 @@ def get_variants(event_log_id: int):
         }), 404
     
     try:
-        result = mining_service.get_variants(event_log_id)
+        result = get_mining_service().get_variants(event_log_id)
         
         if 'error' in result:
             return jsonify({
@@ -128,7 +135,7 @@ def get_performance(event_log_id: int):
         }), 404
     
     try:
-        result = mining_service.get_performance_analysis(event_log_id)
+        result = get_mining_service().get_performance_analysis(event_log_id)
         
         if 'error' in result:
             return jsonify({
@@ -166,7 +173,7 @@ def get_resource_analysis(event_log_id: int):
         }), 404
     
     try:
-        result = mining_service.get_resource_analysis(event_log_id)
+        result = get_mining_service().get_resource_analysis(event_log_id)
         
         if 'error' in result:
             return jsonify({
@@ -204,7 +211,7 @@ def get_department_analysis(event_log_id: int):
         }), 404
     
     try:
-        result = mining_service.get_department_analysis(event_log_id)
+        result = get_mining_service().get_department_analysis(event_log_id)
         
         if 'error' in result:
             return jsonify({

@@ -1,5 +1,5 @@
 from datetime import datetime
-from app import db
+from extensions import db
 
 class EventLog(db.Model):
     """事件日志模型"""
